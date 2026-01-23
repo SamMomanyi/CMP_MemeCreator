@@ -4,16 +4,32 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class MemeEditorViewModel : ViewModel() {
 
     private val _state = MutableStateFlow(MemeEditorState())
 
-    val state : StateFlow<MemeEditorState> = _state.collectAsState()
+    private var hasLoadedInitialData = false
 
+
+    val state : StateFlow<MemeEditorState> = _state
+        .onStart{
+        if(!hasLoadedInitialData){
+            hasLoadedInitialData = true
+        }
+    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = MemeEditorState()
+        )
 
     fun onAction(action: MemeEditorAction){
         when(action){
