@@ -76,19 +76,20 @@ fun MemeTextBox(
 
 
     Box(modifier){
+        val isMemeTextSelected = (textBoxInteractionState is TextBoxInteractionState.Selected && textBoxInteractionState.textBoxId == memeText.id) ||
+                ( textBoxInteractionState is TextBoxInteractionState.Editing  && textBoxInteractionState.textBoxId == memeText.id)
         Box(modifier = modifier
             .sizeIn(maxWidth = maxWidth, maxHeight = maxHeight)
             .border(
                 width = 2.dp,
-                color = if(textBoxInteractionState is TextBoxInteractionState.Selected ||
-                    textBoxInteractionState is TextBoxInteractionState.Editing
+                color = if(isMemeTextSelected
                     ){
                     Color.White
                 } else Color.Transparent,
                 shape = RoundedCornerShape(4.dp)
             )
             .background(
-                color = if(textBoxInteractionState is TextBoxInteractionState.Editing){
+                color = if(textBoxInteractionState is TextBoxInteractionState.Editing && (textBoxInteractionState.textBoxId == memeText.id)){
                     Color.Black.copy(alpha = 0.15f)
                 } else Color.Transparent,
                 shape = RoundedCornerShape(4.dp)
@@ -103,7 +104,7 @@ fun MemeTextBox(
             val fillTextStyle = rememberFillTextStyle()
             //padding between text and box
             val textPadding = 8.dp
-            if(textBoxInteractionState is TextBoxInteractionState.Editing){
+            if(textBoxInteractionState is TextBoxInteractionState.Editing && (textBoxInteractionState.textBoxId == memeText.id)){
                 //if editing we render the outlined textfield
                 OutlinedImpactTextField(
                     text = memeText.text,
@@ -128,8 +129,7 @@ fun MemeTextBox(
             }
         }
         //it is better to show in which state we want to show the X button rather than in which state we don't since if we added another interaction state we then wouldn't have to change multiple segments of our code
-        if(textBoxInteractionState is TextBoxInteractionState.Selected ||
-                textBoxInteractionState is TextBoxInteractionState.Editing ) {
+        if(isMemeTextSelected) {
             Box(
                 modifier = Modifier
                     .size(24.dp)

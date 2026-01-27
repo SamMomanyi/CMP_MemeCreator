@@ -32,14 +32,14 @@ fun OutlinedImpactText(
     }
 }
 
-@Composable
-@Preview
-fun OutlinedImpactTextPreview(){
-    MemeCreatorTheme {
-        OutlinedImpactText(
-           text = "HELLO WORLD",
-            strokeTextStyle = rememberStrokeTextStyle()
-
-        )
-    }
-}
+//@Composable
+//@Preview
+//fun OutlinedImpactTextPreview(){
+//    MemeCreatorTheme {
+//        OutlinedImpactText(
+//           text = "HELLO WORLD",
+//            strokeTextStyle = rememberStrokeTextStyle()
+//
+//        )
+//    }
+//}

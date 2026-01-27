@@ -9,8 +9,14 @@ data class MemeEditorState(
     val isLeavingWithoutSaving: Boolean = false,
     val textBoxInteractioState: TextBoxInteractionState = TextBoxInteractionState.None,
     //here we know have a list of memeTexts
-    val memeTexts : List<MemeText> = emptyList()
+    val memeTexts : List<MemeText> = listOf(
+        MemeText(
+            id = "hello",
+            text = "TAP TO EDIT"
+        )
+    )
 )
+
 
 //the textbox could be selected , not selected, selected and being edited , also which textbox
 sealed interface TextBoxInteractionState {
