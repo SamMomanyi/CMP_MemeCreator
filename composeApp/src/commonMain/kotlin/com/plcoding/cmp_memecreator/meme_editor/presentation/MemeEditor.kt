@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
@@ -70,6 +72,7 @@ fun MemeEditorScreenRoot(
 //we only want to pass down two parameters , no matter how big the state grows
 //we also avoid passing the viewModelInstance
 //this also makes it easy for our screen to be previewed
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MemeEditorScreen(
     //we take in the template selected as a navigation thingy
@@ -77,6 +80,12 @@ fun MemeEditorScreen(
     state: MemeEditorState,
     onAction: (MemeEditorAction) -> Unit
 ) {
+    BackHandler(
+        //ensures it won't always be enabled
+        enabled = !state.isLeavingWithoutSaving
+    ) {
+        onAction(MemeEditorAction.OnGoBackClick)
+    }
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
