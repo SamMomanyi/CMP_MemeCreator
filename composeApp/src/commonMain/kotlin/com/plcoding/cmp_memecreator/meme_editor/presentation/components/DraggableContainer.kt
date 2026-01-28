@@ -142,10 +142,10 @@ fun DraggableContainer(
                     textBoxInteractionState = textBoxInteractionState,
                     // Pass the parent box's dimensions
                     maxWidth = with(density ){
-                        parentWidth.toDp()
+                        (parentWidth / child.scale).toDp()
                     },
                     maxHeight = with(density ){
-                        parentHeight.toDp()
+                        (parentHeight / child.scale).toDp()
                     },
                     modifier = Modifier
                     // You might need an .offset() here if your MemeText has x/y coordinates

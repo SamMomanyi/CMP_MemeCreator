@@ -34,7 +34,10 @@ fun NavigationRoot(){
             }
             //we call the MemeEditorScreenRoot and not MemeEditorScreen since that's the main entry point screen
             MemeEditorScreenRoot(
-                template = template
+                template = template,
+                onGoBack = {
+                    navController.navigateUp()
+                }
             )
         }
     }

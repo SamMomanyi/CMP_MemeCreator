@@ -9,12 +9,9 @@ data class MemeEditorState(
     val isLeavingWithoutSaving: Boolean = false,
     val textBoxInteractioState: TextBoxInteractionState = TextBoxInteractionState.None,
     //here we know have a list of memeTexts
-    val memeTexts : List<MemeText> = listOf(
-        MemeText(
-            id = "hello",
-            text = "TAP TO EDIT"
-        )
-    )
+    val memeTexts : List<MemeText> = listOf(),
+    //we can use this without events since if we pop back then the viewModel state of the MemeEditor is destroyed with it
+    val hasLeftEditor: Boolean = false
 )
 
 

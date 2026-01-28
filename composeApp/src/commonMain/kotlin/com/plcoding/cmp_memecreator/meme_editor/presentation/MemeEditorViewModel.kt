@@ -1,10 +1,8 @@
 package com.plcoding.cmp_memecreator.meme_editor.presentation
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,12 +35,12 @@ class MemeEditorViewModel : ViewModel() {
     fun onAction(action: MemeEditorAction){
         when(action){
             MemeEditorAction.OnAddTextClick -> addText()
-            MemeEditorAction.OnConfirmLeaveWithoutSaving -> TODO()
+            MemeEditorAction.OnConfirmLeaveWithoutSaving -> confirmLeave()
             is MemeEditorAction.OnContainerSizeChange -> updateContainerSize(action.size)
             is MemeEditorAction.OnDeleteMemeTextClick -> deleteMemeText(action.id)
-            MemeEditorAction.OnDismissLeaveWithoutSaving -> TODO()
+            MemeEditorAction.OnDismissLeaveWithoutSaving -> dismissConfirmLeaveDialog()
             is MemeEditorAction.OnEditMemeText -> editMemeText(action.id)
-            MemeEditorAction.OnGoBackClick -> TODO()
+            MemeEditorAction.OnGoBackClick -> attemptToGoBack()
             is MemeEditorAction.OnMemeTextChange -> updateMemeText(action.id,action.text)
             is MemeEditorAction.OnMemeTextTransformChange -> transformMemeText(
                 id =  action.id,
@@ -53,6 +51,42 @@ class MemeEditorViewModel : ViewModel() {
             is MemeEditorAction.OnSaveMemeClick -> TODO()
             is MemeEditorAction.OnSelectMemeText -> selectMemeText(action.id)
             MemeEditorAction.OnTapOutsideSelectedText -> unselectMemeText()
+        }
+    }
+
+    private fun dismissConfirmLeaveDialog() {
+        _state.update { it.copy(
+            //to know cancel the dialog
+            isLeavingWithoutSaving = false
+        )
+
+        }
+    }
+
+    private fun confirmLeave() {
+        _state.update {
+            it.copy(
+                hasLeftEditor = true
+            )
+        }
+    }
+
+    private fun attemptToGoBack() {
+        //if atleast is made then we can't leave without confirmation
+        if(state.value.memeTexts.isEmpty()) {
+            //we can safely navigate away
+            _state.update{
+                it.copy(
+                    hasLeftEditor = true
+                )
+            }
+        } else {
+            _state.update {
+                it.copy(
+                    //so we then use this to show our leave confirmation Dialog
+                    isLeavingWithoutSaving = true
+                )
+            }
         }
     }
 

@@ -7,9 +7,15 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,26 +26,41 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cmpmemecreator.composeapp.generated.resources.Res
+import cmpmemecreator.composeapp.generated.resources.cancel
+import cmpmemecreator.composeapp.generated.resources.leave
+import cmpmemecreator.composeapp.generated.resources.leave_editor_message
+import cmpmemecreator.composeapp.generated.resources.leave_editor_title
 import cmpmemecreator.composeapp.generated.resources.meme_template_06
 import coil3.compose.AsyncImagePainter.State.Empty.painter
 import com.plcoding.cmp_memecreator.core.presentation.MemeTemplate
 import com.plcoding.cmp_memecreator.core.theme.MemeCreatorTheme
 import com.plcoding.cmp_memecreator.meme_editor.presentation.components.BottomBar
+import com.plcoding.cmp_memecreator.meme_editor.presentation.components.ConfirmationDialog
+import com.plcoding.cmp_memecreator.meme_editor.presentation.components.ConfirmationDialogConfig
 import com.plcoding.cmp_memecreator.meme_editor.presentation.components.DraggableContainer
 import com.plcoding.cmp_memecreator.meme_editor.presentation.components.MemeTextBox
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MemeEditorScreenRoot(
     template: MemeTemplate,
-    viewModel: MemeEditorViewModel = koinViewModel()
+    onGoBack : () -> Unit,
+    viewModel : MemeEditorViewModel = koinViewModel()
 ){
     val  state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.hasLeftEditor){
+        if (state.hasLeftEditor){
+            onGoBack()
+        }
+    }
     MemeEditorScreen(
         template = template,
         state = state,
+        //we can intercept all the actions here
         onAction = viewModel::onAction
     )
 }
@@ -143,7 +164,36 @@ fun MemeEditorScreen(
                         .matchParentSize()
                 )
             }
+            IconButton(
+                onClick = {
+                    onAction(MemeEditorAction.OnGoBackClick)
+                },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+            ){
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowLeft,
+                    contentDescription = "Back"
+                )
+            }
         }
+    }
+    if(state.isLeavingWithoutSaving){
+        ConfirmationDialog(
+            config = ConfirmationDialogConfig(
+                title = stringResource(Res.string.leave_editor_title),
+                message = stringResource(Res.string.leave_editor_message),
+                confirmButtonText = stringResource(Res.string.leave),
+                cancelButtonText = stringResource(Res.string.cancel),
+                confirmButtonColor = MaterialTheme.colorScheme.secondary
+            ),
+            onConfirm = {
+                onAction(MemeEditorAction.OnConfirmLeaveWithoutSaving)
+            },
+            onDismiss = {
+                onAction(MemeEditorAction.OnDismissLeaveWithoutSaving)
+            }
+        )
     }
 }
 
