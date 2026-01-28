@@ -21,6 +21,10 @@ import cmpmemecreator.composeapp.generated.resources.Res
 import com.plcoding.cmp_memecreator.meme_editor.presentation.MemeEditorAction
 import com.plcoding.cmp_memecreator.meme_editor.presentation.MemeText
 import com.plcoding.cmp_memecreator.meme_editor.presentation.TextBoxInteractionState
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @Composable
@@ -57,10 +61,53 @@ fun DraggableContainer(
             val transformableState  = rememberTransformableState { scaleChange, panChange, rotationChange ->
                 val newRotation = child.rotation + rotationChange
                 //coreceIn provides min and max values to avoid scaling infinitly
+
+                //the math needed for rotation
+                val angle = newRotation * PI.toFloat() / 180f
+                val cos = cos(angle)
+                val sin = sin(angle)
+
+                val rotatedPanX = panChange.x * cos - panChange.y *sin
+                val rotatedPanY = panChange.x * sin + panChange.y * cos
+
                 val newScale = (child.scale * scaleChange).coerceIn(0.5f,2f)
+
+                //we also need to calculate the scale width of the bounding container
+                //we take how wide the width actual is * what we've currently scaled
+                val scaledWidth = childWidth * child.scale
+                val scaledHeight = childHeight * child.scale
+
+                //we also need to constrain the text inside an invisible bounding box to stop it from moving outside
+                //we use the absolute value if its negative
+                //this formula projects the invisible rectangles edges on the x and y axis
+                val visualWidth = abs(scaledWidth * cos) + abs(scaledHeight * sin)
+                val visualHeight = abs(scaledWidth * sin) + abs(scaledHeight * cos)
+
+                //we do this since scaling the box also moves it
+                val scaledOffsetX =  (scaledWidth - childWidth) / 2
+                val scaledOffsetY =  (scaledHeight - childHeight) / 2
+                //since rotation also changes the scale
+
+                val rotationOffsetX  = (visualWidth  - scaledWidth) /2
+                val rotationOffsetY  = (visualHeight  - scaledHeight) / 2
+
+                //we then use all the calculations above to calculate max and min values of x and y (where our text is allowed to move)
+
+                val minX = scaledOffsetX + rotationOffsetX
+                val maxX = parentWidth  - childWidth - scaledOffsetX - rotationOffsetX
+                val minY = scaledOffsetY + rotationOffsetY
+                val maxY = parentHeight - childHeight - scaledOffsetY - rotationOffsetY
+
+
                 val newOffset = Offset(
-                    x = (child.offsetRatioX * parentWidth + panChange.x),
-                    y = (child.offsetRatioY * parentHeight + panChange.y)
+                    x = (child.offsetRatioX * parentWidth + child.scale * rotatedPanX).coerceIn(
+                        minimumValue = minOf(minX,maxX),
+                        maximumValue = maxOf(minX,maxX)
+                    ),
+                    y = (child.offsetRatioY * parentHeight + child.scale * rotatedPanY).coerceIn(
+                        minimumValue = minOf(minY,maxY),
+                        maximumValue = maxOf(minY,maxY)
+                    )
                 )
 
                 onChildTransformChanged(
