@@ -213,7 +213,7 @@ actual class PlatformMemeExporter : MemeExporter {
         )
 
         textNS.drawWithRect(
-            rect = CGRectMake(0.0,0.0, memeText.constraintWidth.toDouble(), textHeight ),
+            rect = CGRectMake(0.0,0.0, memeText.constraintWidth.toDouble(), textHeight.toDouble() ),
             options = 1L shl 0 ,
             attributes = attributes,
             context = null
@@ -234,7 +234,8 @@ actual class PlatformMemeExporter : MemeExporter {
             NSFontAttributeName to font,
             NSForegroundColorAttributeName to UIColor.whiteColor,
             NSStrokeColorAttributeName to UIColor.blackColor,
-            NSStrokeWidthAttributeName to NSNumber(strokeWidth)
+            //we need to set it to negative on IOS
+            NSStrokeWidthAttributeName to NSNumber(-strokeWidth)
 
         )
     }

@@ -9,7 +9,7 @@ actual class PlatformShareSheet(
     private val context : Context
 ) {
     //Uri makes our App like a file provider and also gives temporary access to the file contents to another app
-    actual suspend fun shareFile(filePath: String) {
+    actual  fun shareFile(filePath: String) {
         //we first create the file path then content Uri
         val file = File(filePath)
 
