@@ -4,16 +4,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.adaptive.currentWindowSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,6 +28,7 @@ import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -118,6 +123,8 @@ fun MemeEditorScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
+            //we need to get the window size to fix the potrait and landscape misalignments
+            val windowSize = currentWindowSize()
             Box{
                 // The constraints are now available here as maxWidth and maxHeight
 
@@ -126,6 +133,12 @@ fun MemeEditorScreen(
                     painter = painterResource(template.drawable),
                     contentDescription = null,
                     modifier = Modifier
+                        //we set a then to apply conditional modifier
+                        .then(
+                            if(windowSize.width > windowSize.height) {
+                                Modifier.fillMaxHeight()
+                            } else Modifier.fillMaxHeight()
+                        )
                         .fillMaxWidth()
                         //when size changes we notify viewModel about the size change
                         .onSizeChanged {
@@ -135,7 +148,13 @@ fun MemeEditorScreen(
                                 )
                             )
                         },
-                    contentScale = ContentScale.FillWidth
+                    //we are on landscape
+                    contentScale = if(windowSize.width > windowSize.height){
+                        ContentScale.FillHeight
+                    } //we are on potrait
+                    else {
+                        ContentScale.FillWidth
+                    }
                 )
 
                 // 3. The Text Layer (Top Layer)
@@ -181,7 +200,7 @@ fun MemeEditorScreen(
                     .align(Alignment.TopStart)
             ){
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowLeft,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
                     contentDescription = "Back"
                 )
             }
