@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.plcoding.cmp_memecreator.core.presentation.MemeTemplate
 import com.plcoding.cmp_memecreator.meme_editor.domain.MemeExporter
 import com.plcoding.cmp_memecreator.meme_editor.domain.SaveToStorageStrategy
+import com.plcoding.cmp_memecreator.meme_editor.presentation.util.PlatformShareSheet
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +23,8 @@ import kotlin.uuid.Uuid
 class MemeEditorViewModel (
     //this are now injected by Koin automatically
     private val memeExporter : MemeExporter,
-    private val storageStrategy: SaveToStorageStrategy
+    private val storageStrategy: SaveToStorageStrategy,
+    private val shareSheet: PlatformShareSheet
 ): ViewModel(
 
 ) {
@@ -81,6 +83,8 @@ class MemeEditorViewModel (
                 )
                 .onSuccess {
                     println("Works brev")
+                    //if exporting meme was successful we want to use our share sheet to share the meme returned by memeExporter
+                    shareSheet.shareFile(it)
                 }
                 .onFailure {
                     it.printStackTrace()
