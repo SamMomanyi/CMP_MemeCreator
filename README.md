@@ -1,28 +1,102 @@
-# CMP Meme Creator 🎨
+![screenshow](https://github.com/user-attachments/assets/bcac9118-4406-415e-8ba1-88b5b8931e34)# 🎨 CMP Meme Creator
 
-A cross-platform mobile application built using **Compose Multiplatform (CMP)** that allows users to create, customize, and share memes. This project focuses on high-quality code architecture and shared business logic between Android and iOS.
+A cross-platform meme creation app built with **Compose Multiplatform (CMP)**, targeting both **Android** and **iOS** from a single Kotlin codebase.
 
-## 🚀 Key Features
-- **Shared UI:** A single codebase for both Android and iOS using Jetpack Compose.
-- **Meme Editor:** Custom text overlays on a variety of meme templates.
-- **MVI Architecture:** Unidirectional data flow for predictable and debuggable state management.
-- **Image Export:** Functionality to render and save the final meme to the local device.
-- **Resource Management:** Efficient handling of fonts and images across multiple platforms.
+---
+
+## ✨ Features
+
+- 🖼️ Pick any image from your device as a meme base
+- ✍️ Add and position custom text overlays
+- 🎨 Shared UI across Android and iOS using Jetpack Compose
+- 💾 Export and save the finished meme to your device
+- ⚡ Reactive state management with Kotlin Coroutines & Flow
+
+---
 
 ## 🛠 Tech Stack
-- **Kotlin Multiplatform (KMP):** Core logic sharing.
-- **Compose Multiplatform:** Declarative UI for mobile.
-- **Koin:** Dependency injection for a decoupled and testable codebase.
-- **MVI (Model-View-Intent):** Clean separation of UI, state, and user actions.
-- **Kotlin Coroutines & Flow:** Asynchronous programming and reactive state updates.
+
+| Layer | Technology |
+|---|---|
+| UI | Compose Multiplatform |
+| Language | Kotlin (KMP) |
+| Architecture | MVI (Model-View-Intent) |
+| Dependency Injection | Koin |
+| Async | Kotlin Coroutines & Flow |
+| Platforms | Android · iOS |
+
+---
 
 ## 🏗 Architecture
-This project follows **Clean Code** principles and the **MVI** pattern:
-1. **Model (State):** Immutable data classes representing the UI state.
-2. **View:** Composable functions that observe state and emit user intents.
-3. **Intent (Action):** Explicit user actions handled by the ViewModels to update the state.
+
+This project follows **MVI (Model-View-Intent)** with clean separation of concerns:
+
+```
+User Interaction (Intent)
+        ↓
+   ViewModel
+        ↓
+  State Update (Model)
+        ↓
+   Composable UI (View)
+```
+
+- **State** — Immutable data classes that represent the full UI state at any point in time
+- **Intent** — Sealed classes representing every possible user action
+- **ViewModel** — Processes intents and emits new state via `StateFlow`
+- **Composables** — Observe state and render the UI; they only emit intents, never mutate state directly
+
+---
 
 ## 📂 Project Structure
-- : Contains 90%+ of the shared application logic, UI, and resources.
-- : Android-specific platform code.
-- : The thin native wrapper for the iOS deployment.
+
+```
+CMP_MemeCreator/
+├── composeApp/               # Shared KMP module (90%+ of the codebase)
+│   └── src/
+│       ├── commonMain/       # Shared UI, ViewModels, business logic
+│       ├── androidMain/      # Android platform-specific implementations
+│       └── iosMain/          # iOS platform-specific implementations
+├── iosApp/                   # Thin iOS native wrapper (Swift/Xcode)
+├── build.gradle.kts          # Root build config
+└── settings.gradle.kts       # Module declarations
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Android Studio Hedgehog or later (with KMP plugin)
+- Xcode 15+ (for iOS builds)
+- JDK 17+
+
+### Clone & Run
+
+```bash
+git clone https://github.com/SamMomanyi/CMP_MemeCreator.git
+cd CMP_MemeCreator
+```
+
+**Android:**
+
+Open the project in Android Studio and run the `composeApp` configuration on an emulator or device.
+
+**iOS:**
+
+```bash
+cd iosApp
+open iosApp.xcodeproj
+```
+
+Then build and run from Xcode on a simulator or physical device.
+![homescreen](https://github.com/user-attachments/assets/6ffd9097-7e8b-4487-84e3-23fc064f674f)
+![screenshow](https://github.com/user-attachments/assets/c065767f-32e0-4239-932a-3febe1e0818a)
+![position text](https://github.com/user-attachments/assets/7bea3b7c-edfd-48b5-89ea-82b9d67a7bcd)
+![expand and contract ](https://github.com/user-attachments/assets/3ae99172-e112-4aaf-a964-d68e654c2b9c)
+
+
+## 📸 Screenshots
+
+>
